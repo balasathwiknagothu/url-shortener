@@ -1,5 +1,6 @@
 package com.sathwik.url_shortener.service;
 
+import com.sathwik.url_shortener.exception.UrlNotFoundException;
 import com.sathwik.url_shortener.entity.Url;
 import com.sathwik.url_shortener.repository.UrlRepository;
 import com.sathwik.url_shortener.util.Base62Encoder;
@@ -33,6 +34,6 @@ public class UrlService {
 
     public Url getByShortCode(String shortCode) {
         return urlRepository.findByShortCode(shortCode)
-                .orElseThrow(() -> new RuntimeException("URL not found"));
+                .orElseThrow(() -> new UrlNotFoundException("No URL found for short code: " + shortCode));
     }
 }
