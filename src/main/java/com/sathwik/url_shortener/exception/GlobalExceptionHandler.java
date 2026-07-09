@@ -1,5 +1,6 @@
 package com.sathwik.url_shortener.exception;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,25 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message("Invalid username or password")
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(com.sathwik.url_shortener.exception.UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserExists(com.sathwik.url_shortener.exception.UserAlreadyExistsException ex) {
+        ErrorResponse error = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+    
     @ExceptionHandler(UrlNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUrlNotFound(UrlNotFoundException ex) {
         ErrorResponse error = ErrorResponse.builder()
