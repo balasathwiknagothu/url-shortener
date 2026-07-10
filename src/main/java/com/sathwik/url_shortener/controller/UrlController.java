@@ -7,6 +7,7 @@ import com.sathwik.url_shortener.dto.UrlResponse;
 import com.sathwik.url_shortener.entity.Url;
 import com.sathwik.url_shortener.service.UrlService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,5 +73,14 @@ public class UrlController {
     public ResponseEntity<Void> deleteUrl(@PathVariable String shortCode) {
         urlService.deleteUrl(shortCode);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/{shortCode}/redirect")
+    public ResponseEntity<Void> redirect(@PathVariable String shortCode) {
+        String originalUrl = urlService.recordClickAndGetOriginalUrl(shortCode);
+    
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.LOCATION, originalUrl);
+    
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 }

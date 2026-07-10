@@ -1,5 +1,7 @@
 package com.sathwik.url_shortener.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.sathwik.url_shortener.repository.ClickEventRepository;
 import com.sathwik.url_shortener.entity.ClickEvent;
 import com.sathwik.url_shortener.exception.UrlExpiredException;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UrlService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UrlService.class);
     private final UrlRepository urlRepository;
     private final UserRepository userRepository;
     private final ClickEventRepository clickEventRepository;
@@ -91,7 +94,7 @@ public class UrlService {
         Url url = getByShortCode(shortCode);
         User currentUser = getCurrentUser();
     
-        if (!url.getUser().getId().equals(currentUser.getId())) {
+        if (url.getUser() == null || !url.getUser().getId().equals(currentUser.getId())) {
             throw new UnauthorizedAccessException("You do not have permission to delete this URL");
         }
     
